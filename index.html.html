@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ビンゴカード</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:#f2f4f8;
+    font-family:"Segoe UI",sans-serif;
+    padding:20px;
+}
+
+#header{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-bottom:8px;
+    width:min(95vw,450px);
+}
+
+.letter{
+    color:white;
+    text-align:center;
+    font-size:clamp(24px,5vw,36px);
+    font-weight:bold;
+    padding:10px 0;
+    border-radius:12px;
+}
+
+.b{background:#ff4d4d;}
+.i{background:#ffb84d;}
+.n{background:#50c878;}
+.g{background:#4da6ff;}
+.o{background:#b266ff;}
+
+#bingo{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    width:min(95vw,450px);
+}
+
+.cell{
+    aspect-ratio:1/1;
+    background:white;
+    border-radius:12px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:clamp(16px,4vw,28px);
+    font-weight:bold;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+    user-select:none;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.cell:hover{
+    transform:scale(1.03);
+}
+
+.marked{
+    background:#ff6b6b;
+    color:white;
+}
+
+.free{
+    background:#ffd54f;
+}
+
+button{
+    margin-top:20px;
+    padding:14px 28px;
+    font-size:18px;
+    border:none;
+    border-radius:12px;
+    background:#28a745;
+    color:white;
+    cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+
+button:hover{
+    background:#218838;
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+    <div class="letter b">B</div>
+    <div class="letter i">I</div>
+    <div class="letter n">N</div>
+    <div class="letter g">G</div>
+    <div class="letter o">O</div>
+</div>
+
+<div id="bingo"></div>
+
+<button onclick="generateBingo()">再生成</button>
+
+<script>
+
+function shuffle(array){
+    for(let i=array.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [array[i],array[j]]=[array[j],array[i]];
+    }
+    return array;
+}
+
+function getNumbers(min,max){
+    const arr=[];
+    for(let i=min;i<=max;i++){
+        arr.push(i);
+    }
+    return shuffle(arr).slice(0,5);
+}
+
+function generateBingo(){
+
+    const board=document.getElementById("bingo");
+    board.innerHTML="";
+
+    const columns=[
+        getNumbers(1,15),
+        getNumbers(16,30),
+        getNumbers(31,45),
+        getNumbers(46,60),
+        getNumbers(61,75)
+    ];
+
+    for(let row=0;row<5;row++){
+
+        for(let col=0;col<5;col++){
+
+            const cell=document.createElement("div");
+            cell.className="cell";
+
+            if(row===2 && col===2){
+                cell.textContent="FREE";
+                cell.classList.add("free");
+            }else{
+                cell.textContent=columns[col][row];
+            }
+
+            cell.addEventListener("click",()=>{
+                if(!cell.classList.contains("free")){
+                    cell.classList.toggle("marked");
+                }
+            });
+
+            board.appendChild(cell);
+        }
+    }
+}
+
+generateBingo();
+
+</script>
+
+</body>
+</html>
